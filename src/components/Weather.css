@@ -1,6 +1,24 @@
 div {
-    text-align: center;
-    border-width: 5px;
-    border-color: grey;
-    border-radius: 2px;
+  text-align: center;
+}
+
+.currentWeather {
+  border-width: 5px;
+  border-color: grey;
+  border-radius: 2px;
+}
+
+.weekForecast {
+  display: inline-block;
+  padding-right: 10px;
+}
+
+.maxTemp{
+    font-weight: bold;
+    padding-right: 5px;
+}
+
+.temperatures{
+    display: flex;
+
 }
