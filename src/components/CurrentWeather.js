@@ -1,10 +1,16 @@
 import { useState, useEffect, useCallback } from "react";
+import { useSelector } from "react-redux";
 import "./CurrentWeather.css";
 const defaultLatitude = 39.74362;
 const defaultLongitude = -8.80705;
 const apiKey = "32e6a9e3a7ab0fc0b70086d0b3990a44";
 const units = "metric";
 function CurrentWeather() {
+  const city = useSelector((state) => state.weather.city);
+  const countryCode = useSelector((state) => state.weather.country);
+  const loadCurrentWeather = useSelector(
+    (state) => state.loading.loadCurrentWeather
+  );
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
   const [currentWeather, setcurrentWeather] = useState(null);
@@ -20,7 +26,20 @@ function CurrentWeather() {
   };
 
   const getCurrentWeather = useCallback(async () => {
-    if (latitude && longitude) {
+    console.log(city);
+    console.log(countryCode)
+    if (city && countryCode && loadCurrentWeather) {
+      const response = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?q=${city},${countryCode}&appid=${apiKey}&units=${units}`
+      );
+
+      if (!response.ok) {
+        throw new Error("Error while trying to get current weather");
+      }
+
+      const data = await response.json();
+      setcurrentWeather(data);
+    } else if (latitude && longitude) {
       const response = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=${units}`
       );
@@ -32,7 +51,7 @@ function CurrentWeather() {
       const data = await response.json();
       setcurrentWeather(data);
     }
-  }, [latitude, longitude]);
+  }, [latitude, longitude, city, countryCode, loadCurrentWeather]);
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(getCurrentLocation);

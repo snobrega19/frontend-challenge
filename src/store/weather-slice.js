@@ -5,6 +5,7 @@ const defaultState = {
   countries: [],
   city: "",
   country: "",
+  loadCurrentWeather: false,
 };
 
 const weatherSlice = createSlice({
@@ -24,6 +25,9 @@ const weatherSlice = createSlice({
       if (!existingCountry) {
         state.countries = [...state.countries, newCountry];
       }
+      state.city = newCity;
+      state.country = newCountry;
+      state.loadCurrentWeather = true;
     },
     changeCity(state, action) {
       state.city = action.payload;

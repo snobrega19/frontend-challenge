@@ -6,8 +6,8 @@ import SearchWeather from "./components/SearchWeather";
 function App() {
   return (
     <div className="app">
-      <CurrentWeather />
       <SearchWeather />
+      <CurrentWeather />
       <ForecastWeekData />
     </div>
   );

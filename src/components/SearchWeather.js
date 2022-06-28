@@ -1,7 +1,11 @@
 import { useSelector, useDispatch } from "react-redux";
 import { actions } from "../store/weather-slice";
+import { loadingActions } from "../store/loading-slice";
+import { useState } from "react";
 
 function SearchWeather() {
+  const [inputCity, setInputCity] = useState("");
+  const [inputCountry, setInputCoutry] = useState("");
   const cities = useSelector((state) => state.weather.cities);
   const countries = useSelector((state) => state.weather.countries);
   const dispatch = useDispatch();
@@ -11,23 +15,28 @@ function SearchWeather() {
   // const [countries, setCountries] = useState([]);
 
   function buttonClickHandler() {
-    dispatch(actions.addCityCountry({ city, country }));
+    dispatch(
+      actions.addCityCountry({ city: inputCity, country: inputCountry })
+    );
+    dispatch(loadingActions.setLoading(true));
   }
 
   function onCityChangeHandler(event) {
-    dispatch(actions.changeCity(event.target.value));
+    setInputCity(event.target.value);
   }
 
   function onCountryChangeHandler(event) {
-    dispatch(actions.changeCountry(event.target.value));
+    setInputCoutry(event.target.value);
   }
 
   function onChangeCitiesHandler(event) {
     dispatch(actions.changeCity(event.target.value));
+    dispatch(loadingActions.setLoading(false));
   }
 
   function onChangeCountriesHandler(event) {
     dispatch(actions.changeCountry(event.target.value));
+    dispatch(loadingActions.setLoading(false));
   }
   return (
     <div>
@@ -36,20 +45,20 @@ function SearchWeather() {
         <input
           type="text"
           id="city"
+          value={inputCity}
           onChange={onCityChangeHandler}
-          value={city}
         />
-        <label htmlFor="country">Country:</label>
+        <label htmlFor="country">Country Code:</label>
         <input
           type="text"
           id="country"
+          value={inputCountry}
           onChange={onCountryChangeHandler}
-          value={country}
         />
         <button onClick={buttonClickHandler}>Get Weather info</button>
       </div>
       <div>
-        <select name="city" onChange={onChangeCitiesHandler} value={city}>
+        <select name="city" onChange={onCityChangeHandler} value={inputCity}>
           <option></option>
           {cities &&
             cities.map((city) => <option key={Math.random()}>{city}</option>)}
@@ -57,8 +66,8 @@ function SearchWeather() {
 
         <select
           name="country"
-          onChange={onChangeCountriesHandler}
-          value={country}
+          onChange={onCountryChangeHandler}
+          value={inputCountry}
         >
           <option></option>
           {countries &&
