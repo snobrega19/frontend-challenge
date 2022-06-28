@@ -2,25 +2,6 @@ div {
   text-align: center;
 }
 
-.app {
-  max-width: 600px;
-  display: inline-block;
-}
-
-.currentWeather {
-  border-width: 5px;
-  border-color: grey;
-  border-radius: 2px;
-  text-align: left;
-  display: flex;
-}
-
-.currentTemp{
-    text-align: left;
-    display: flex;
-    padding-left: 5px;
-}
-
 .weekForecast {
   display: inline-block;
   padding: 5px 5px 5px 5px;

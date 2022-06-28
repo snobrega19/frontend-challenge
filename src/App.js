@@ -1,10 +1,14 @@
 import "./App.css";
-import Weather from "./components/Weather";
+import ForecastWeekData from "./components/ForecastWeekData";
+import CurrentWeather from "./components/CurrentWeather";
+import SearchWeather from "./components/SearchWeather";
 
 function App() {
   return (
-    <div>
-      <Weather />
+    <div className="app">
+      <CurrentWeather />
+      <SearchWeather />
+      <ForecastWeekData />
     </div>
   );
 }

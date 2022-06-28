@@ -1,0 +1,13 @@
+.currentWeather {
+  border-width: 5px;
+  border-color: grey;
+  border-radius: 2px;
+  text-align: left;
+  display: flex;
+}
+
+.currentTemp {
+  text-align: left;
+  display: flex;
+  padding-left: 5px;
+}
