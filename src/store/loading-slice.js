@@ -2,14 +2,18 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const defaultState = {
   loadCurrentWeather: false,
+  loadForecastData: false,
 };
 
 const loadingSlice = createSlice({
   name: "loading",
   initialState: defaultState,
   reducers: {
-    setLoading(state, action) {
+    setloadCurrentWeather(state, action) {
       state.loadCurrentWeather = action.payload;
+    },
+    setLoadForecastData(state, action) {
+      state.loadForecastData = action.payload;
     },
   },
 });

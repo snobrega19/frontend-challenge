@@ -3,10 +3,12 @@ import weatherSlice from "./weather-slice";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import loadingSlice from "./loading-slice";
+import forecastWeatherSlice from "./forecast-weather-slice";
 
 const rootReducer = combineReducers({
   weather: weatherSlice.reducer,
   loading: loadingSlice.reducer,
+  forecast: forecastWeatherSlice.reducer
 });
 
 const persistConfig = {

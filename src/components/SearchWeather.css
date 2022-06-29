@@ -1,0 +1,32 @@
+.nobull {
+  list-style-type: none;
+}
+
+a:link {
+  text-decoration: none;
+}
+
+a:visited {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+a:active {
+  text-decoration: none;
+}
+
+.container {
+    display: flex;
+    flex-direction: row-reverse;
+    /* Border */
+    border: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+.container__input {
+    border-color: transparent;
+    /* Take available width */
+    flex: 1;
+}

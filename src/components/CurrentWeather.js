@@ -26,8 +26,6 @@ function CurrentWeather() {
   };
 
   const getCurrentWeather = useCallback(async () => {
-    console.log(city);
-    console.log(countryCode)
     if (city && countryCode && loadCurrentWeather) {
       const response = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?q=${city},${countryCode}&appid=${apiKey}&units=${units}`
