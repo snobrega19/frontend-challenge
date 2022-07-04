@@ -5,10 +5,10 @@ import storage from "redux-persist/lib/storage";
 import loadingSlice from "./loading-slice";
 import forecastWeatherSlice from "./forecast-weather-slice";
 
-const rootReducer = combineReducers({
+const appReducer = combineReducers({
   weather: weatherSlice.reducer,
   loading: loadingSlice.reducer,
-  forecast: forecastWeatherSlice.reducer
+  forecast: forecastWeatherSlice.reducer,
 });
 
 const persistConfig = {
@@ -17,7 +17,7 @@ const persistConfig = {
   whitelist: ["weather"],
 };
 
-const persistedReducer = persistReducer(persistConfig, rootReducer);
+const persistedReducer = persistReducer(persistConfig, appReducer);
 
 export const store = configureStore({
   reducer: persistedReducer,

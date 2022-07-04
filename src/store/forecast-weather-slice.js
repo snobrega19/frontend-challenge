@@ -12,7 +12,6 @@ const forecastWeatherSlice = createSlice({
     setLatitudeAndLongitude(state, action) {
       state.latitude = action.payload.latitude;
       state.longitude = action.payload.longitude;
-      console.log(state.latitude, state.longitude);
     },
   },
 });

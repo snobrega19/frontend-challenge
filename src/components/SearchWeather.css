@@ -1,32 +1,114 @@
+.searchWeather {
+  width: 100%;
+}
+
+.search {
+  display: inline-block;
+  text-align: center;
+  justify-content: center;
+  align-items: baseline;
+}
+
+.search button {
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 4px 2px;
+  cursor: pointer;
+  background-color: white;
+  color: black;
+  border: 2px solid #008cba;
+  border-radius: 4px;
+  transition-duration: 0.4s;
+}
+
+.search button:hover {
+  background-color: #008cba;
+  color: white;
+}
+
+.search input {
+  padding: 6px 3px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.search input:focus {
+  border: 2px solid #555;
+}
+
+.city {
+  display: inherit;
+}
+
+.city label {
+  color: gray;
+  padding-right: 10px;
+}
+
+.searchList {
+  text-align: center;
+  justify-content: center;
+}
+
+.searchList a {
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 4px 2px;
+  cursor: pointer;
+  background-color: white;
+  color: black;
+  border: 2px solid #008cba;
+  border-radius: 4px;
+  transition-duration: 0.4s;
+}
+
+.searchList a:hover {
+  background-color: #008cba;
+  color: white;
+}
+
+.select select {
+  background-color: transparent;
+  border: 2px solid #008cba;
+  border-radius: 4px;
+  padding: 0 1em 0.2em 0;
+  margin: 5px;
+  font-family: inherit;
+  font-size: inherit;
+  cursor: inherit;
+  line-height: inherit;
+}
+
+.select button {
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 4px 2px;
+  cursor: pointer;
+  background-color: white;
+  color: #e22c18;
+  border: 2px solid #e22c18;
+  border-radius: 4px;
+  transition-duration: 0.4s;
+}
+
+.select button:hover {
+  background-color: #e22c18;
+  color: white;
+}
+
 .nobull {
   list-style-type: none;
-}
-
-a:link {
-  text-decoration: none;
-}
-
-a:visited {
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: none;
-}
-
-a:active {
-  text-decoration: none;
-}
-
-.container {
-    display: flex;
-    flex-direction: row-reverse;
-    /* Border */
-    border: 1px solid rgba(0, 0, 0, 0.3);
-}
-
-.container__input {
-    border-color: transparent;
-    /* Take available width */
-    flex: 1;
+  display: inline-grid;
 }

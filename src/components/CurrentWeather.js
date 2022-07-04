@@ -1,72 +1,91 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSelector } from "react-redux";
+import useHttp from "../hooks/use-http";
 import "./CurrentWeather.css";
+import StatusBar from "./UI/StatusBar";
 const defaultLatitude = 39.74362;
 const defaultLongitude = -8.80705;
-const apiKey = "32e6a9e3a7ab0fc0b70086d0b3990a44";
+const apiKey = "0e66409d2818073f5e8fd1d76d8a718d";
 const units = "metric";
 function CurrentWeather() {
   const city = useSelector((state) => state.weather.city);
-  const countryCode = useSelector((state) => state.weather.country);
   const loadCurrentWeather = useSelector(
     (state) => state.loading.loadCurrentWeather
   );
-  const [latitude, setLatitude] = useState(null);
-  const [longitude, setLongitude] = useState(null);
-  const [currentWeather, setcurrentWeather] = useState(null);
+  const [latitude, setLatitude] = useState(defaultLatitude);
+  const [longitude, setLongitude] = useState(defaultLongitude);
+  const [currentWeather, setCurrentWeather] = useState(null);
+  const { isLoading, makeRequest: getCurrentWeather } = useHttp();
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [error, setError] = useState(false);
+  const [successMessage, setSuccessMessage] = useState(false);
 
-  const getCurrentLocation = (position) => {
-    if (position) {
-      setLatitude(position.coords.latitude);
-      setLongitude(position.coords.longitude);
-    } else {
-      setLatitude(defaultLatitude);
-      setLongitude(defaultLongitude);
-    }
-  };
-
-  const getCurrentWeather = useCallback(async () => {
-    if (city && countryCode && loadCurrentWeather) {
-      const response = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?q=${city},${countryCode}&appid=${apiKey}&units=${units}`
-      );
-
-      if (!response.ok) {
-        throw new Error("Error while trying to get current weather");
-      }
-
-      const data = await response.json();
-      setcurrentWeather(data);
+  const getRequestConfig = useCallback(() => {
+    let requestConfig;
+    if (city && loadCurrentWeather) {
+      requestConfig = {
+        url: `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=${units}`,
+      };
     } else if (latitude && longitude) {
-      const response = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=${units}`
-      );
-
-      if (!response.ok) {
-        throw new Error("Error while trying to get current weather");
-      }
-
-      const data = await response.json();
-      setcurrentWeather(data);
+      requestConfig = {
+        url: `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=${units}`,
+      };
     }
-  }, [latitude, longitude, city, countryCode, loadCurrentWeather]);
+    return requestConfig;
+  }, [city, loadCurrentWeather, latitude, longitude]);
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition(getCurrentLocation);
-    getCurrentWeather();
-  }, [getCurrentWeather]);
+    navigator.geolocation.getCurrentPosition((position) => {
+      setLatitude(position.coords.latitude);
+      setLongitude(position.coords.longitude);
+    });
+
+    getCurrentWeather(getRequestConfig())
+      .then((res) => {
+        setCurrentWeather(res);
+        setShowSuccess(true);
+        setShowError(false);
+        setSuccessMessage(
+          "Getted current weather for the selected location with success."
+        );
+      })
+      .catch(() => {
+        setShowError(true);
+        setShowSuccess(false);
+        setError("Fail to get current weather for the selected location.");
+      });
+  }, [getCurrentWeather, getRequestConfig]);
 
   return (
     <div>
+      {showSuccess && (
+        <StatusBar
+          onClose={() => setShowSuccess(false)}
+          variant="success"
+          message={successMessage}
+        />
+      )}
+      {showError && (
+        <StatusBar
+          onClose={() => setShowError(false)}
+          variant="danger"
+          message={error}
+        />
+      )}
       {currentWeather && (
         <div className="currentWeather">
-          <p>{currentWeather.name}</p>
           <div className="currentTemp">
-            <p>{Math.ceil(currentWeather.main.temp)}&deg;</p>
             <img
               src={`https://api.openweathermap.org/img/w/${currentWeather.weather[0].icon}.png`}
               alt="weather icon"
             />
+            <p className="temperature">
+              {Math.ceil(currentWeather.main.temp)}&deg;
+            </p>
+          </div>
+          <div className="city-name">
+            <p className="right">{currentWeather.name}</p>
           </div>
         </div>
       )}

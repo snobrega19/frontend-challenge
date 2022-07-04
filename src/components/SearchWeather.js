@@ -4,43 +4,104 @@ import { loadingActions } from "../store/loading-slice";
 import { useState } from "react";
 import { forecastActions } from "../store/forecast-weather-slice";
 import "./SearchWeather.css";
-const apiKey = "32e6a9e3a7ab0fc0b70086d0b3990a44";
+import Option, { styles } from "./UI/SelecterOption";
+import Select from "react-select";
+import Modal from "./UI/Modal";
+import useHttp from "../hooks/use-http";
+import StatusBar from "./UI/StatusBar";
+const apiKey = "0e66409d2818073f5e8fd1d76d8a718d";
 const units = "metric";
 
 function SearchWeather() {
   const [inputCity, setInputCity] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
-  const [selectedCountry, setSelectedCountry] = useState("");
-  const cities = useSelector((state) => state.weather.cities);
-  const countries = useSelector((state) => state.weather.countries);
-  const dispatch = useDispatch();
-
   const [searchDataArray, setSearchDataArray] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [alertMessage, setAlertMessage] = useState(null);
+  const [isClearAll, setIsClearAll] = useState(false);
+  const [dataToDelete, setDataToDelete] = useState(null);
+  const cities = useSelector((state) => state.weather.cities);
+  const { isLoading, makeRequest: getCoordinatesByCity } = useHttp();
+  const dispatch = useDispatch();
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [error, setError] = useState(false);
+  const [successMessage, setSuccessMessage] = useState(false);
+
+  let options = [];
+  cities.forEach((city) => {
+    options.push({
+      value: city,
+      label: city,
+    });
+  });
 
   function onCityChangeHandler(event) {
     setInputCity(event.target.value);
   }
 
-  function onChangeCitiesHandler(event) {
-    setSelectedCity(event.target.value);
+  function getRequestConfig(city = null) {
+    let requestConfig = null;
+    if (inputCity) {
+      requestConfig = {
+        url: `https://api.openweathermap.org/data/2.5/find?q=${inputCity}&appid=${apiKey}&units=${units}`,
+      };
+    } else {
+      requestConfig = {
+        url: `https://api.openweathermap.org/data/2.5/find?q=${city}&appid=${apiKey}&units=${units}`,
+      };
+    }
+    return requestConfig;
   }
 
-  function onChangeCountriesHandler(event) {
-    setSelectedCountry(event.target.value);
+  async function onChangeCitiesHandler(selectedCity) {
+    const value = selectedCity.value;
+    if (value !== "") {
+      setSelectedCity(value);
+      dispatch(actions.addCity(value));
+
+      let city = value.split(",")[0];
+      let latitude, longitude;
+
+      getCoordinatesByCity(getRequestConfig(city))
+        .then((res) => {
+          latitude = res.list.find((c) => c.name === city).coord.lat;
+          longitude = res.list.find((c) => c.name === city).coord.lon;
+
+          dispatch(
+            forecastActions.setLatitudeAndLongitude({ latitude, longitude })
+          );
+          dispatch(loadingActions.setloadCurrentWeather(true));
+          dispatch(loadingActions.setLoadForecastData(true));
+        })
+        .catch(() => {
+          setShowError(true);
+          setShowSuccess(false);
+          setError(`Fail to get coordinates for the selected city.`);
+        });
+    }
   }
 
   async function searchClickHandler() {
-    const response = await fetch(
-      `https://api.openweathermap.org/data/2.5/find?q=${inputCity}&appid=${apiKey}&units=${units}`
-    );
-    const data = await response.json();
-    setSearchDataArray(data);
+    getCoordinatesByCity(getRequestConfig())
+      .then((res) => {
+        setSearchDataArray(res);
+        setShowSuccess(true);
+        setShowError(false);
+        setSuccessMessage(
+          `Successfully get suggestions for (${inputCity}).`
+        );
+      })
+      .catch(() => {
+        setShowError(true);
+        setShowSuccess(false);
+        setError(`Fail to search suggestions for '${inputCity}'.`);
+      });
   }
 
   function setSelectedSearchData(city, countryCode, latitude, longitude) {
-    dispatch(actions.addCityCountry({ city: city, country: countryCode }));
-    setSelectedCity(city);
-    setSelectedCountry(countryCode);
+    dispatch(actions.addCity(city + ", " + countryCode));
+    setSelectedCity(city + ", " + countryCode);
     dispatch(loadingActions.setloadCurrentWeather(true));
     setInputCity("");
     dispatch(forecastActions.setLatitudeAndLongitude({ latitude, longitude }));
@@ -48,27 +109,71 @@ function SearchWeather() {
     setSearchDataArray(null);
   }
 
+  function clearAllhandler() {
+    setAlertMessage("Are you sure you want to delete all searched cities?");
+    setIsClearAll(true);
+    setShowModal(true);
+  }
+
+  function onDelete(data) {
+    setIsClearAll(false);
+    setDataToDelete(data);
+    setAlertMessage(`Are you sure you want to delete ${data.value}`);
+    setShowModal(true);
+  }
+
+  function confirmClickHandler() {
+    if (isClearAll) {
+      dispatch(actions.resetStore());
+    } else {
+      dispatch(actions.removeCity(dataToDelete.value));
+    }
+
+    setShowModal(false);
+  }
+
   return (
-    <div>
-      <div>
-        <label htmlFor="city">City:</label>
-        <div className="container">
+    <div className="searchWeather">
+      {showSuccess && (
+        <StatusBar
+          onClose={() => setShowSuccess(false)}
+          variant="success"
+          message={successMessage}
+        />
+      )}
+      {showError && (
+        <StatusBar
+          onClose={() => setShowError(false)}
+          variant="danger"
+          message={error}
+        />
+      )}
+      {showModal && (
+        <Modal
+          title="Are you sure?"
+          show={showModal}
+          close={() => setShowModal(false)}
+          message={alertMessage}
+          onButtonClick={confirmClickHandler}
+          onCancelClick={() => setShowModal(false)}
+        />
+      )}
+      <div className="search">
+        <div className="city">
           <input
-            className="container__input"
             type="text"
             id="city"
             value={inputCity}
             onChange={onCityChangeHandler}
+            placeholder="Search City"
           />
         </div>
         <button onClick={searchClickHandler}>Search</button>
-        {searchDataArray && (
-          <ul className="nobull">
-            {searchDataArray.list.map((data) => (
-              // eslint-disable-next-line jsx-a11y/anchor-is-valid
-              <a
-                href="#"
-                onClick={(e) =>
+        <div className="searchList">
+          {searchDataArray &&
+            searchDataArray.list.map((data) => (
+              <button
+                onClick={() =>
                   setSelectedSearchData(
                     data.name,
                     data.sys.country,
@@ -78,38 +183,24 @@ function SearchWeather() {
                 }
                 key={Math.random()}
               >
-                <li>
-                  {data.name}, {data.sys.country}
-                </li>
-              </a>
+                {data.name}, {data.sys.country}
+              </button>
             ))}
-          </ul>
-        )}
+        </div>
       </div>
-      <div>
-        <select
-          name="city"
+      <div className="select">
+        <Select
+          value={options.filter(({ value }) => value === selectedCity)}
+          styles={styles}
           onChange={onChangeCitiesHandler}
-          value={selectedCity}
-        >
-          <option></option>
-          {cities &&
-            cities.map((city) => <option key={Math.random()}>{city}</option>)}
-        </select>
-
-        <select
-          name="country"
-          onChange={onChangeCountriesHandler}
-          value={selectedCountry}
-        >
-          <option></option>
-          {countries &&
-            countries.map((country) => (
-              <option key={Math.random()} value={country}>
-                {country}
-              </option>
-            ))}
-        </select>
+          options={options}
+          components={{ Option }}
+          closeMenuOnScroll={false}
+          deleteOption={onDelete}
+        />
+        <button className="buttonClearAll" onClick={clearAllhandler}>
+          Clear All
+        </button>
       </div>
     </div>
   );

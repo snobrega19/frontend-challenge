@@ -1,9 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSelector } from "react-redux";
+import useHttp from "../hooks/use-http";
 import "./ForecastWeekData.css";
+import StatusBar from "./UI/StatusBar";
 const defaultLatitude = 39.74362;
 const defaultLongitude = -8.80705;
-const apiKey = "32e6a9e3a7ab0fc0b70086d0b3990a44";
+const apiKey = "0e66409d2818073f5e8fd1d76d8a718d";
 const units = "metric";
 const exclude = "minutely, hourly, alerts";
 function ForecastWeekData() {
@@ -15,52 +17,66 @@ function ForecastWeekData() {
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
   const [weekWeather, setWeekWeather] = useState(null);
+  const { isLoading, makeRequest: getWeekForecast } = useHttp();
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [error, setError] = useState(false);
+  const [successMessage, setSuccessMessage] = useState(false);
 
-  const getCurrentLocation = (position) => {
-    if (position) {
-      setLatitude(position.coords.latitude);
-      setLongitude(position.coords.longitude);
-    } else {
-      setLatitude(defaultLatitude);
-      setLongitude(defaultLongitude);
-    }
-  };
-
-  const getWeekForecast = useCallback(async () => {
+  const getRequestConfig = useCallback(() => {
+    let requestConfig;
     if (searchLatitude && searchLongitude && loadForecastData) {
-      const weekResponse = await fetch(
-        `https://api.openweathermap.org/data/2.5/onecall?lat=${searchLatitude}&lon=${searchLongitude}&appid=${apiKey}&units=${units}&exclude=${exclude}`
-      );
-
-      if (!weekResponse.ok) {
-        throw new Error("Error while trying to get week forecast");
-      }
-
-      let weekData = await weekResponse.json();
-      setWeekWeather(weekData);
+      requestConfig = {
+        url: `https://api.openweathermap.org/data/2.5/onecall?lat=${searchLatitude}&lon=${searchLongitude}&appid=${apiKey}&units=${units}&exclude=${exclude}`,
+      };
     } else if (latitude && longitude) {
-      const weekResponse = await fetch(
-        `https://api.openweathermap.org/data/2.5/onecall?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=${units}&exclude=${exclude}`
-      );
-
-      if (!weekResponse.ok) {
-        throw new Error("Error while trying to get week forecast");
-      }
-
-      let weekData = await weekResponse.json();
-      setWeekWeather(weekData);
+      requestConfig = {
+        url: `https://api.openweathermap.org/data/2.5/onecall?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=${units}&exclude=${exclude}`,
+      };
     }
-  }, [latitude, longitude, searchLatitude, searchLongitude, loadForecastData]);
+    return requestConfig;
+  }, [searchLatitude, searchLongitude, loadForecastData, latitude, longitude]);
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition(getCurrentLocation);
-    getWeekForecast().catch((error) => {
-      throw new Error(error.message);
+    navigator.geolocation.getCurrentPosition((position) => {
+      setLatitude(position.coords.latitude);
+      setLongitude(position.coords.longitude);
     });
-  }, [getWeekForecast]);
+
+    getWeekForecast(getRequestConfig())
+      .then((res) => {
+        setWeekWeather(res);
+        setShowSuccess(true);
+        setShowError(false);
+        setSuccessMessage(
+          "Getted forecast data for the next 7 days to the selected location with success."
+        );
+      })
+      .catch(() => {
+        setShowError(true);
+        setShowSuccess(false);
+        setError(
+          "Fail to get forecast data for the next 7 days to the selected location."
+        );
+      });
+  }, [getWeekForecast, getRequestConfig]);
 
   return (
     <div>
+      {showSuccess && (
+        <StatusBar
+          onClose={() => setShowSuccess(false)}
+          variant="success"
+          message={successMessage}
+        />
+      )}
+      {showError && (
+        <StatusBar
+          onClose={() => setShowError(false)}
+          variant="danger"
+          message={error}
+        />
+      )}
       {weekWeather && (
         <div className="weekForecast">
           {weekWeather.daily.map((week) => (
