@@ -14,10 +14,10 @@ function ForecastWeekData() {
   const loadForecastData = useSelector(
     (state) => state.loading.loadForecastData
   );
-  const [latitude, setLatitude] = useState(null);
-  const [longitude, setLongitude] = useState(null);
+  const [latitude, setLatitude] = useState(defaultLatitude);
+  const [longitude, setLongitude] = useState(defaultLongitude);
   const [weekWeather, setWeekWeather] = useState(null);
-  const { isLoading, makeRequest: getWeekForecast } = useHttp();
+  const { makeRequest: getWeekForecast } = useHttp();
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState(false);
@@ -36,6 +36,14 @@ function ForecastWeekData() {
     }
     return requestConfig;
   }, [searchLatitude, searchLongitude, loadForecastData, latitude, longitude]);
+
+  const closeSuccessModal = () => {
+    setShowSuccess(false);
+  };
+
+  const closeErrorModal = () => {
+    setShowError(false);
+  };
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition((position) => {
@@ -62,20 +70,24 @@ function ForecastWeekData() {
   }, [getWeekForecast, getRequestConfig]);
 
   return (
-    <div>
+    <div className="forecast-data">
       {showSuccess && (
-        <StatusBar
-          onClose={() => setShowSuccess(false)}
-          variant="success"
-          message={successMessage}
-        />
+        <div>
+          <StatusBar
+            onClose={setTimeout(() => closeSuccessModal(), 3000)}
+            variant="success"
+            message={successMessage}
+          />
+        </div>
       )}
       {showError && (
-        <StatusBar
-          onClose={() => setShowError(false)}
-          variant="danger"
-          message={error}
-        />
+        <div>
+          <StatusBar
+            onClose={setTimeout(() => closeErrorModal(), 3000)}
+            variant="danger"
+            message={error}
+          />
+        </div>
       )}
       {weekWeather && (
         <div className="weekForecast">

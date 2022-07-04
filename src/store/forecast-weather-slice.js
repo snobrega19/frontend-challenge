@@ -13,6 +13,9 @@ const forecastWeatherSlice = createSlice({
       state.latitude = action.payload.latitude;
       state.longitude = action.payload.longitude;
     },
+    clear() {
+      return defaultState;
+    },
   },
 });
 

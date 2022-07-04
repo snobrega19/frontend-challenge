@@ -1,5 +1,12 @@
+.currentWeather-div {
+  width: 661px;
+  height: 150px;
+  display: table-cell;
+  vertical-align: middle;
+}
+
 .currentWeather {
-  width: 100%;
+  vertical-align: middle;
 }
 
 .currentTemp {
@@ -16,7 +23,7 @@
 }
 
 .city-name {
-  display: flex;
+  display: inline-block;
   float: right;
 }
 

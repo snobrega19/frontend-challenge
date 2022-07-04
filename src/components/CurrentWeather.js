@@ -7,6 +7,21 @@ const defaultLatitude = 39.74362;
 const defaultLongitude = -8.80705;
 const apiKey = "0e66409d2818073f5e8fd1d76d8a718d";
 const units = "metric";
+
+const timeConverter = (t) => {
+  const dateFormat = new Date(t * 1000);
+  const date = dateFormat.getDate();
+  const time = dateFormat.toLocaleTimeString("default");
+  return date + ", " + time;
+};
+
+const weekDay = (t) => {
+  const dateFormat = new Date(t * 1000);
+  const weekday = dateFormat.toLocaleString("en-us", {
+    weekday: "long",
+  });
+  return weekday;
+};
 function CurrentWeather() {
   const city = useSelector((state) => state.weather.city);
   const loadCurrentWeather = useSelector(
@@ -15,7 +30,7 @@ function CurrentWeather() {
   const [latitude, setLatitude] = useState(defaultLatitude);
   const [longitude, setLongitude] = useState(defaultLongitude);
   const [currentWeather, setCurrentWeather] = useState(null);
-  const { isLoading, makeRequest: getCurrentWeather } = useHttp();
+  const { makeRequest: getCurrentWeather } = useHttp();
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState(false);
@@ -34,6 +49,14 @@ function CurrentWeather() {
     }
     return requestConfig;
   }, [city, loadCurrentWeather, latitude, longitude]);
+
+  const closeSuccessModal = () => {
+    setShowSuccess(false);
+  };
+
+  const closeErrorModal = () => {
+    setShowError(false);
+  };
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition((position) => {
@@ -58,20 +81,24 @@ function CurrentWeather() {
   }, [getCurrentWeather, getRequestConfig]);
 
   return (
-    <div>
+    <div className="currentWeather-div">
       {showSuccess && (
-        <StatusBar
-          onClose={() => setShowSuccess(false)}
-          variant="success"
-          message={successMessage}
-        />
+        <div>
+          <StatusBar
+            onClose={setTimeout(() => closeSuccessModal(), 3000)}
+            variant="success"
+            message={successMessage}
+          />
+        </div>
       )}
       {showError && (
-        <StatusBar
-          onClose={() => setShowError(false)}
-          variant="danger"
-          message={error}
-        />
+        <div>
+          <StatusBar
+            onClose={setTimeout(() => closeErrorModal(), 3000)}
+            variant="danger"
+            message={error}
+          />
+        </div>
       )}
       {currentWeather && (
         <div className="currentWeather">
@@ -86,6 +113,11 @@ function CurrentWeather() {
           </div>
           <div className="city-name">
             <p className="right">{currentWeather.name}</p>
+            <p>
+              {`${weekDay(currentWeather.dt * 1000)} ${timeConverter(
+                currentWeather.dt
+              )}`}
+            </p>
           </div>
         </div>
       )}

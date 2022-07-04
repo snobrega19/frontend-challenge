@@ -29,6 +29,7 @@ const weatherSlice = createSlice({
       if (cityToRemove) {
         state.cities = state.cities.filter((city) => city !== cityToRemove);
       }
+      state.city = "";
     },
   },
 });

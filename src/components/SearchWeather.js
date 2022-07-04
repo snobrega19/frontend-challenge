@@ -21,7 +21,7 @@ function SearchWeather() {
   const [isClearAll, setIsClearAll] = useState(false);
   const [dataToDelete, setDataToDelete] = useState(null);
   const cities = useSelector((state) => state.weather.cities);
-  const { isLoading, makeRequest: getCoordinatesByCity } = useHttp();
+  const { makeRequest: getCoordinatesByCity } = useHttp();
   const dispatch = useDispatch();
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
@@ -88,9 +88,7 @@ function SearchWeather() {
         setSearchDataArray(res);
         setShowSuccess(true);
         setShowError(false);
-        setSuccessMessage(
-          `Successfully get suggestions for (${inputCity}).`
-        );
+        setSuccessMessage(`Successfully get suggestions for (${inputCity}).`);
       })
       .catch(() => {
         setShowError(true);
@@ -125,28 +123,42 @@ function SearchWeather() {
   function confirmClickHandler() {
     if (isClearAll) {
       dispatch(actions.resetStore());
+      dispatch(forecastActions.clear());
     } else {
       dispatch(actions.removeCity(dataToDelete.value));
+      dispatch(forecastActions.clear());
     }
 
     setShowModal(false);
   }
 
+  const closeSuccessModal = () => {
+    setShowSuccess(false);
+  };
+
+  const closeErrorModal = () => {
+    setShowError(false);
+  };
+
   return (
     <div className="searchWeather">
       {showSuccess && (
-        <StatusBar
-          onClose={() => setShowSuccess(false)}
-          variant="success"
-          message={successMessage}
-        />
+        <div>
+          <StatusBar
+            onClose={setTimeout(() => closeSuccessModal(), 3000)}
+            variant="success"
+            message={successMessage}
+          />
+        </div>
       )}
       {showError && (
-        <StatusBar
-          onClose={() => setShowError(false)}
-          variant="danger"
-          message={error}
-        />
+        <div>
+          <StatusBar
+            onClose={setTimeout(() => closeErrorModal(), 3000)}
+            variant="danger"
+            message={error}
+          />
+        </div>
       )}
       {showModal && (
         <Modal

@@ -2,6 +2,11 @@ div {
   text-align: center;
 }
 
+.forecast-data {
+  width: 100%;
+  height: auto;
+}
+
 .weekForecast {
   display: inline-block;
   padding: 5px 5px 5px 5px;
