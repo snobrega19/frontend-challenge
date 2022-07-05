@@ -1,12 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
+const defaultLatitude = 39.74362;
+const defaultLongitude = -8.80705;
 
 const defaultState = {
-  latitude: null,
-  longitude: null,
+  latitude: defaultLatitude,
+  longitude: defaultLongitude,
 };
 
-const forecastWeatherSlice = createSlice({
-  name: "forecast",
+const coordinatesSlice = createSlice({
+  name: "coordinates",
   initialState: defaultState,
   reducers: {
     setLatitudeAndLongitude(state, action) {
@@ -19,5 +21,5 @@ const forecastWeatherSlice = createSlice({
   },
 });
 
-export const forecastActions = forecastWeatherSlice.actions;
-export default forecastWeatherSlice;
+export const coordinatesActions = coordinatesSlice.actions;
+export default coordinatesSlice;

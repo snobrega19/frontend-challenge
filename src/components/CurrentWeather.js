@@ -1,40 +1,51 @@
 import { useState, useEffect, useCallback } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import useHttp from "../hooks/use-http";
 import "./CurrentWeather.css";
 import StatusBar from "./UI/StatusBar";
 import { getWeekDayAndTime } from "../utils/date-functions";
-const defaultLatitude = 39.74362;
-const defaultLongitude = -8.80705;
-const apiKey = "0e66409d2818073f5e8fd1d76d8a718d";
-const units = "metric";
+import { weatherActions } from "store/weather-slice";
+import useCurrentPosition from "hooks/useCurrentPosition";
 
-function CurrentWeather() {
-  const city = useSelector((state) => state.weather.city);
-  const loadCurrentWeather = useSelector(
-    (state) => state.loading.loadCurrentWeather
-  );
-  const [latitude, setLatitude] = useState(defaultLatitude);
-  const [longitude, setLongitude] = useState(defaultLongitude);
-  const [currentWeather, setCurrentWeather] = useState(null);
+const userWeather = () => {
   const { makeRequest: getCurrentWeather } = useHttp();
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState(false);
   const [successMessage, setSuccessMessage] = useState(false);
 
+  return {
+    showSuccess,
+    showError,
+    error,
+    successMessage,
+    getCurrentWeather,
+  };
+};
+
+function CurrentWeather() {
+  const dispatch = useDispatch();
+  const city = useSelector((state) => state.cities.city);
+  const loadCurrentWeather = useSelector(
+    (state) => state.loading.loadCurrentWeather
+  );
+  const { latitude, longitude } = useSelector((state) => state.coordinates);
+  const { currentWeather } = useSelector(
+    (state) => state.weather.currentWeather
+  );
+  const { showSuccess, showError, error, successMessage, getCurrentWeather } =
+    userWeather();
+
+  useCurrentPosition();
+
   const getRequestConfig = useCallback(() => {
-    let requestConfig;
+    let endpoint;
     if (city && loadCurrentWeather) {
-      requestConfig = {
-        url: `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=${units}`,
-      };
+      endpoint = `weather?q=${city}`;
     } else if (latitude && longitude) {
-      requestConfig = {
-        url: `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=${units}`,
-      };
+      endpoint = `weather?lat=${latitude}&lon=${longitude}`;
     }
-    return requestConfig;
+    return endpoint;
   }, [city, loadCurrentWeather, latitude, longitude]);
 
   const closeSuccessModal = () => {
@@ -46,30 +57,26 @@ function CurrentWeather() {
   };
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition((position) => {
-      setLatitude(position.coords.latitude);
-      setLongitude(position.coords.longitude);
-    });
-
     getCurrentWeather(getRequestConfig())
       .then((res) => {
-        setCurrentWeather(res);
-        setShowSuccess(true);
-        setShowError(false);
-        setSuccessMessage(
-          "Getted current weather for the selected location with success."
-        );
+        console.log(res);
+        dispatch(weatherActions.setCurrentWeather(res));
+        // setShowSuccess(true);
+        // setShowError(false);
+        // setSuccessMessage(
+        //   "Getted current weather for the selected location with success."
+        // );
       })
       .catch(() => {
-        setShowError(true);
-        setShowSuccess(false);
-        setError("Fail to get current weather for the selected location.");
+        // setShowError(true);
+        // setShowSuccess(false);
+        // setError("Fail to get current weather for the selected location.");
       });
   }, [getCurrentWeather, getRequestConfig]);
 
   return (
     <div className="currentWeather-div">
-      {showSuccess && (
+      {/* {showSuccess && (
         <div>
           <StatusBar
             onClose={setTimeout(() => closeSuccessModal(), 3000)}
@@ -86,7 +93,7 @@ function CurrentWeather() {
             message={error}
           />
         </div>
-      )}
+      )} */}
       {currentWeather && (
         <div className="currentWeather">
           <div className="currentTemp">

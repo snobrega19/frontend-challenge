@@ -9,8 +9,8 @@ const apiKey = "0e66409d2818073f5e8fd1d76d8a718d";
 const units = "metric";
 const exclude = "minutely, hourly, alerts";
 function ForecastWeekData() {
-  const searchLatitude = useSelector((state) => state.forecast.latitude);
-  const searchLongitude = useSelector((state) => state.forecast.longitude);
+  const searchLatitude = useSelector((state) => state.coordinates.latitude);
+  const searchLongitude = useSelector((state) => state.coordinates.longitude);
   const loadForecastData = useSelector(
     (state) => state.loading.loadForecastData
   );
@@ -46,7 +46,7 @@ function ForecastWeekData() {
   };
 
   useEffect(() => {
-    navigator.geolocation.geCurrentPosititon((position) => {
+    navigator.geolocation.getCurrentPosition((position) => {
       setLatitude(position.coords.latitude);
       setLongitude(position.coords.longitude);
     });

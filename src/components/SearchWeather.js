@@ -1,8 +1,8 @@
 import { useSelector, useDispatch } from "react-redux";
-import { actions } from "../store/weather-slice";
+import { citiesActions } from "../store/cities-slice";
 import { loadingActions } from "../store/loading-slice";
 import { useState } from "react";
-import { forecastActions } from "../store/forecast-weather-slice";
+import { coordinatesActions } from "../store/coordinates-slice";
 import "./SearchWeather.css";
 import Option, { styles } from "./UI/SelecterOption";
 import Select from "react-select";
@@ -13,6 +13,7 @@ const apiKey = "0e66409d2818073f5e8fd1d76d8a718d";
 const units = "metric";
 
 function SearchWeather() {
+  const dispatch = useDispatch();
   const [inputCity, setInputCity] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
   const [searchDataArray, setSearchDataArray] = useState(null);
@@ -20,9 +21,9 @@ function SearchWeather() {
   const [alertMessage, setAlertMessage] = useState(null);
   const [isClearAll, setIsClearAll] = useState(false);
   const [dataToDelete, setDataToDelete] = useState(null);
-  const cities = useSelector((state) => state.weather.cities);
+  const cities = useSelector((state) => state.cities.cities);
   const { makeRequest: getCoordinatesByCity } = useHttp();
-  const dispatch = useDispatch();
+
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState(false);
@@ -58,7 +59,7 @@ function SearchWeather() {
     const value = selectedCity.value;
     if (value !== "") {
       setSelectedCity(value);
-      dispatch(actions.addCity(value));
+      dispatch(citiesActions.addCity(value));
 
       let city = value.split(",")[0];
       let latitude, longitude;
@@ -69,7 +70,7 @@ function SearchWeather() {
           longitude = res.list.find((c) => c.name === city).coord.lon;
 
           dispatch(
-            forecastActions.setLatitudeAndLongitude({ latitude, longitude })
+            coordinatesActions.setLatitudeAndLongitude({ latitude, longitude })
           );
           dispatch(loadingActions.setloadCurrentWeather(true));
           dispatch(loadingActions.setLoadForecastData(true));
@@ -98,11 +99,13 @@ function SearchWeather() {
   }
 
   function setSelectedSearchData(city, countryCode, latitude, longitude) {
-    dispatch(actions.addCity(city + ", " + countryCode));
+    dispatch(citiesActions.addCity(city + ", " + countryCode));
     setSelectedCity(city + ", " + countryCode);
     dispatch(loadingActions.setloadCurrentWeather(true));
     setInputCity("");
-    dispatch(forecastActions.setLatitudeAndLongitude({ latitude, longitude }));
+    dispatch(
+      coordinatesActions.setLatitudeAndLongitude({ latitude, longitude })
+    );
     dispatch(loadingActions.setLoadForecastData(true));
     setSearchDataArray(null);
   }
@@ -122,11 +125,11 @@ function SearchWeather() {
 
   function confirmClickHandler() {
     if (isClearAll) {
-      dispatch(actions.resetStore());
-      dispatch(forecastActions.clear());
+      dispatch(citiesActions.resetStore());
+      dispatch(coordinatesActions.clear());
     } else {
-      dispatch(actions.removeCity(dataToDelete.value));
-      dispatch(forecastActions.clear());
+      dispatch(citiesActions.removeCity(dataToDelete.value));
+      dispatch(coordinatesActions.clear());
     }
 
     setShowModal(false);

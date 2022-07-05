@@ -1,20 +1,24 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
-import weatherSlice from "./weather-slice";
+import citiesSlice from "./cities-slice";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import loadingSlice from "./loading-slice";
-import forecastWeatherSlice from "./forecast-weather-slice";
+import coordinatesSlice from "./coordinates-slice";
+import statusSlice from "./status-slice";
+import weatherSlice from "./weather-slice";
 
 const appReducer = combineReducers({
-  weather: weatherSlice.reducer,
+  cities: citiesSlice.reducer,
   loading: loadingSlice.reducer,
-  forecast: forecastWeatherSlice.reducer,
+  coordinates: coordinatesSlice.reducer,
+  status: statusSlice.reducer,
+  weather: weatherSlice.reducer,
 });
 
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["weather"],
+  whitelist: ["cities"],
 };
 
 const persistedReducer = persistReducer(persistConfig, appReducer);
