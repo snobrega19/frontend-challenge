@@ -46,7 +46,7 @@ function ForecastWeekData() {
   };
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition((position) => {
+    navigator.geolocation.geCurrentPosititon((position) => {
       setLatitude(position.coords.latitude);
       setLongitude(position.coords.longitude);
     });

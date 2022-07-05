@@ -3,25 +3,12 @@ import { useSelector } from "react-redux";
 import useHttp from "../hooks/use-http";
 import "./CurrentWeather.css";
 import StatusBar from "./UI/StatusBar";
+import { getWeekDayAndTime } from "../utils/date-functions";
 const defaultLatitude = 39.74362;
 const defaultLongitude = -8.80705;
 const apiKey = "0e66409d2818073f5e8fd1d76d8a718d";
 const units = "metric";
 
-const timeConverter = (t) => {
-  const dateFormat = new Date(t * 1000);
-  const date = dateFormat.getDate();
-  const time = dateFormat.toLocaleTimeString("default");
-  return date + ", " + time;
-};
-
-const weekDay = (t) => {
-  const dateFormat = new Date(t * 1000);
-  const weekday = dateFormat.toLocaleString("en-us", {
-    weekday: "long",
-  });
-  return weekday;
-};
 function CurrentWeather() {
   const city = useSelector((state) => state.weather.city);
   const loadCurrentWeather = useSelector(
@@ -113,11 +100,7 @@ function CurrentWeather() {
           </div>
           <div className="city-name">
             <p className="right">{currentWeather.name}</p>
-            <p>
-              {`${weekDay(currentWeather.dt * 1000)} ${timeConverter(
-                currentWeather.dt
-              )}`}
-            </p>
+            <p>{getWeekDayAndTime(currentWeather.dt)}</p>
           </div>
         </div>
       )}

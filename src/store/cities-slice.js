@@ -5,8 +5,8 @@ const defaultState = {
   city: "",
 };
 
-const weatherSlice = createSlice({
-  name: "weather",
+const citiesSlice = createSlice({
+  name: "city",
   initialState: defaultState,
   reducers: {
     addCity(state, action) {
@@ -34,5 +34,5 @@ const weatherSlice = createSlice({
   },
 });
 
-export const actions = weatherSlice.actions;
-export default weatherSlice;
+export const citiesActions = citiesSlice.actions;
+export default citiesSlice;

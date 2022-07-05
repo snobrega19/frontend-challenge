@@ -7,14 +7,14 @@ function Modal(props) {
       </BootstrapModal.Header>
 
       <BootstrapModal.Body>
-        <p>{props.message}</p>
+        <p data-testid="modal-message">{props.message}</p>
       </BootstrapModal.Body>
 
       <BootstrapModal.Footer>
-        <Button variant="secondary" onClick={props.onCancelClick}>
+        <Button data-testid="cancel-button" variant="secondary" onClick={props.onCancelClick}>
           No
         </Button>
-        <Button variant="danger" onClick={props.onButtonClick}>
+        <Button  data-testid="confirm-button" variant="danger" onClick={props.onButtonClick}>
           Yes
         </Button>
       </BootstrapModal.Footer>

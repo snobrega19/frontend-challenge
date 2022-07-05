@@ -12,9 +12,7 @@ root.render(
   <Provider store={store}>
     <PersistGate persistor={persistor}>
       <React.StrictMode>
-        <ErrorBoundary>
-          <App />
-        </ErrorBoundary>
+        <App />
       </React.StrictMode>
     </PersistGate>
   </Provider>
