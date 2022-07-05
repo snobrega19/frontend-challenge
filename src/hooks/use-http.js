@@ -5,9 +5,8 @@ const units = "metric";
 function useHttp() {
   const [isLoading, setIsLoading] = useState(false);
 
-  const makeRequest = useCallback(async (endpoint, requestConfig = null) => {
+  const makeRequest = useCallback(async (endpoint, requestConfig = {}) => {
     setIsLoading(true);
-    console.log(apiURL);
 
     const response = await fetch(
       `${apiURL}/${endpoint}&appid=${apiKey}&units=${units}`,

@@ -6,13 +6,12 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
-  console.log(process.env);
   return (
     <div>
       <div className="weather-app text-gray-500">
-        <SearchWeather />
+        {/* <SearchWeather /> */}
         <CurrentWeather />
-        <ForecastWeekData />
+        {/* <ForecastWeekData /> */}
       </div>
     </div>
   );

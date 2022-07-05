@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 const defaultState = {
-  error: {},
-  success: {},
+  error: null,
+  success: null,
   showError: false,
   showSuccess: false,
 };

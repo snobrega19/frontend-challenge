@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 const defaultState = {
-  currentWeather: {},
-  weekWeather: {},
+  currentWeather: null,
+  weekWeather: null,
 };
 
 const weatherSlice = createSlice({

@@ -8,7 +8,6 @@ import { weatherActions } from "store/weather-slice";
 import useCurrentPosition from "hooks/useCurrentPosition";
 
 const userWeather = () => {
-  const { makeRequest: getCurrentWeather } = useHttp();
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState(false);
@@ -19,22 +18,20 @@ const userWeather = () => {
     showError,
     error,
     successMessage,
-    getCurrentWeather,
   };
 };
 
 function CurrentWeather() {
   const dispatch = useDispatch();
+  const { makeRequest: getCurrentWeather } = useHttp();
   const city = useSelector((state) => state.cities.city);
+  const currentWeather = useSelector((state) => state.weather.currentWeather);
   const loadCurrentWeather = useSelector(
     (state) => state.loading.loadCurrentWeather
   );
   const { latitude, longitude } = useSelector((state) => state.coordinates);
-  const { currentWeather } = useSelector(
-    (state) => state.weather.currentWeather
-  );
-  const { showSuccess, showError, error, successMessage, getCurrentWeather } =
-    userWeather();
+
+  const { showSuccess, showError, error, successMessage } = userWeather();
 
   useCurrentPosition();
 
@@ -59,7 +56,6 @@ function CurrentWeather() {
   useEffect(() => {
     getCurrentWeather(getRequestConfig())
       .then((res) => {
-        console.log(res);
         dispatch(weatherActions.setCurrentWeather(res));
         // setShowSuccess(true);
         // setShowError(false);
@@ -67,12 +63,13 @@ function CurrentWeather() {
         //   "Getted current weather for the selected location with success."
         // );
       })
-      .catch(() => {
+      .catch((error) => {
+        console.log(error);
         // setShowError(true);
         // setShowSuccess(false);
         // setError("Fail to get current weather for the selected location.");
       });
-  }, [getCurrentWeather, getRequestConfig]);
+  }, [getRequestConfig, getCurrentWeather]);
 
   return (
     <div className="currentWeather-div">
