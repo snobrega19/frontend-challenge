@@ -9,7 +9,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { statusActions } from "store/status-slice";
 
 function App() {
-  
   const dispatch = useDispatch();
   const { showSuccess, showError, error, successMessage } = useSelector(
     (state) => state.status
@@ -23,7 +22,7 @@ function App() {
   };
   return (
     <div>
-      {showSuccess && (
+      {!error && showSuccess && (
         <div>
           <StatusBar
             onClose={setTimeout(() => closeSuccessModal(), 10000)}
@@ -45,7 +44,7 @@ function App() {
         <div className="weather-app text-gray-500">
           {/* <SearchWeather /> */}
           <CurrentWeather />
-          {/* <ForecastWeekData /> */}
+          <ForecastWeekData />
         </div>
       )}
     </div>
