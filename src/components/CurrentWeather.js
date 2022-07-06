@@ -1,25 +1,15 @@
-import { useState, useEffect, useCallback } from "react";
+import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import useHttp from "../hooks/use-http";
 import "./CurrentWeather.css";
-import StatusBar from "./UI/StatusBar";
 import { getWeekDayAndTime } from "../utils/date-functions";
 import { weatherActions } from "store/weather-slice";
 import useCurrentPosition from "hooks/useCurrentPosition";
+import { statusActions } from "store/status-slice";
+import { getCurrentWeatherEndpoint } from "../utils/request-configs";
 
-const userWeather = () => {
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [showError, setShowError] = useState(false);
-  const [error, setError] = useState(false);
-  const [successMessage, setSuccessMessage] = useState(false);
-
-  return {
-    showSuccess,
-    showError,
-    error,
-    successMessage,
-  };
-};
+const defaultLatitude = 39.74362;
+const defaultLongitude = -8.80705;
 
 function CurrentWeather() {
   const dispatch = useDispatch();
@@ -29,68 +19,35 @@ function CurrentWeather() {
   const loadCurrentWeather = useSelector(
     (state) => state.loading.loadCurrentWeather
   );
-  const { latitude, longitude } = useSelector((state) => state.coordinates);
-
-  const { showSuccess, showError, error, successMessage } = userWeather();
-
-  useCurrentPosition();
-
-  const getRequestConfig = useCallback(() => {
-    let endpoint;
-    if (city && loadCurrentWeather) {
-      endpoint = `weather?q=${city}`;
-    } else if (latitude && longitude) {
-      endpoint = `weather?lat=${latitude}&lon=${longitude}`;
-    }
-    return endpoint;
-  }, [city, loadCurrentWeather, latitude, longitude]);
-
-  const closeSuccessModal = () => {
-    setShowSuccess(false);
-  };
-
-  const closeErrorModal = () => {
-    setShowError(false);
-  };
+  const coordinates = useSelector((state) => state.coordinates);
+  useCurrentPosition(); //gets current longitude and latitude and sets values
 
   useEffect(() => {
-    getCurrentWeather(getRequestConfig())
+    getCurrentWeather(
+      getCurrentWeatherEndpoint(city, loadCurrentWeather, {
+        latitude: coordinates.latitude ?? defaultLatitude,
+        longitude: coordinates.longitude ?? defaultLongitude,
+      })
+    )
       .then((res) => {
         dispatch(weatherActions.setCurrentWeather(res));
-        // setShowSuccess(true);
-        // setShowError(false);
-        // setSuccessMessage(
-        //   "Getted current weather for the selected location with success."
-        // );
+        dispatch(
+          statusActions.setSuccessMessage(
+            "Get current weather for this location with success."
+          )
+        );
       })
-      .catch((error) => {
-        console.log(error);
-        // setShowError(true);
-        // setShowSuccess(false);
-        // setError("Fail to get current weather for the selected location.");
+      .catch(() => {
+        dispatch(
+          statusActions.setErrorMessage(
+            "Fail to get current weather for this location."
+          )
+        );
       });
-  }, [getRequestConfig, getCurrentWeather]);
+  }, [coordinates]);
 
   return (
     <div className="currentWeather-div">
-      {/* {showSuccess && (
-        <div>
-          <StatusBar
-            onClose={setTimeout(() => closeSuccessModal(), 3000)}
-            variant="success"
-            message={successMessage}
-          />
-        </div>
-      )}
-      {showError && (
-        <div>
-          <StatusBar
-            onClose={setTimeout(() => closeErrorModal(), 3000)}
-            variant="danger"
-            message={error}
-          />
-        </div>
-      )} */}
       {currentWeather && (
         <div className="currentWeather">
           <div className="currentTemp">

@@ -1,10 +1,7 @@
 import React from "react";
 import {
-  fireEvent,
   render,
   screen,
-  waitFor,
-  waitForElementToBeRemoved,
 } from "@testing-library/react";
 import Modal from "./Modal";
 

@@ -1,10 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
-const defaultLatitude = 39.74362;
-const defaultLongitude = -8.80705;
 
 const defaultState = {
-  latitude: defaultLatitude,
-  longitude: defaultLongitude,
+  latitude: null,
+  longitude: null,
 };
 
 const coordinatesSlice = createSlice({
