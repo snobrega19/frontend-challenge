@@ -42,7 +42,7 @@ function App() {
       )}
       {!error && (
         <div className="weather-app text-gray-500">
-          {/* <SearchWeather /> */}
+          <SearchWeather />
           <CurrentWeather />
           <ForecastWeekData />
         </div>

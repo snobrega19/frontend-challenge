@@ -1,0 +1,31 @@
+.select select {
+    background-color: transparent;
+    border: 2px solid #008cba;
+    border-radius: 4px;
+    padding: 0 1em 0.2em 0;
+    margin: 5px;
+    font-family: inherit;
+    font-size: inherit;
+    cursor: inherit;
+    line-height: inherit;
+  }
+  
+  .select button {
+    padding: 5px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin: 4px 2px;
+    cursor: pointer;
+    background-color: white;
+    color: #e22c18;
+    border: 2px solid #e22c18;
+    border-radius: 4px;
+    transition-duration: 0.4s;
+  }
+  
+  .select button:hover {
+    background-color: #e22c18;
+    color: white;
+  }

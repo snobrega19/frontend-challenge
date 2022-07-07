@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { coordinatesActions } from "store/coordinates-slice";
+import { weatherActions } from "store/weather-slice";
 import { useDispatch } from "react-redux";
 
 function useCurrentPosition() {
@@ -13,7 +13,7 @@ function useCurrentPosition() {
 
     geolocation.getCurrentPosition((position) => {
       dispatch(
-        coordinatesActions.setLatitudeAndLongitude({
+        weatherActions.setLatitudeAndLongitude({
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
         })

@@ -4,6 +4,12 @@ const defaultState = {
   successMessage: null,
   showError: false,
   showSuccess: false,
+  modal: {
+    message: "",
+    showModal: false,
+    clearAll: false,
+    dataToDelete: null,
+  },
 };
 
 const statusSlice = createSlice({
@@ -34,8 +40,14 @@ const statusSlice = createSlice({
     setShowErrorToFalse(state) {
       state.showError = false;
     },
-    setShowSuccessToFalse(status) {
-      status.showSuccess = false;
+    setShowSuccessToFalse(state) {
+      state.showSuccess = false;
+    },
+    setModalProps(state, action) {
+      state.modal = {
+        ...state.modal,
+        ...action.payload,
+      };
     },
   },
 });

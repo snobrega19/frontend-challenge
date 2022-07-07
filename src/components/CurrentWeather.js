@@ -7,19 +7,16 @@ import { weatherActions } from "store/weather-slice";
 import useCurrentPosition from "hooks/useCurrentPosition";
 import { statusActions } from "store/status-slice";
 import { getCurrentWeatherEndpoint } from "../utils/request-configs";
-
-const defaultLatitude = 39.74362;
-const defaultLongitude = -8.80705;
+import { defaultLatitude, defaultLongitude } from "../utils/constants";
 
 function CurrentWeather() {
   const dispatch = useDispatch();
   const { makeRequest: getCurrentWeather } = useHttp();
-  const city = useSelector((state) => state.cities.city);
-  const currentWeather = useSelector((state) => state.weather.currentWeather);
-  const loadCurrentWeather = useSelector(
-    (state) => state.loading.loadCurrentWeather
+  const { city } = useSelector((state) => state.cities);
+  const { data: currentWeather, loadCurrentWeather } = useSelector(
+    (state) => state.weather.currentWeather
   );
-  const coordinates = useSelector((state) => state.coordinates);
+  const coordinates = useSelector((state) => state.weather.coordinates);
   useCurrentPosition(); //gets current longitude and latitude and sets values
 
   useEffect(() => {

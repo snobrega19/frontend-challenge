@@ -6,10 +6,10 @@ const defaultState = {
 };
 
 const citiesSlice = createSlice({
-  name: "city",
+  name: "cities",
   initialState: defaultState,
   reducers: {
-    addCity(state, action) {
+    addCityToList(state, action) {
       const newCity = action.payload;
       const existingCity = state.cities.find((city) => city === newCity);
       if (!existingCity) {
@@ -17,19 +17,19 @@ const citiesSlice = createSlice({
       }
       state.city = newCity;
     },
-    changeCity(state, action) {
+    setCity(state, action) {
       state.city = action.payload;
     },
-    resetStore() {
-      storage.removeItem("persist:root");
-      return defaultState;
-    },
-    removeCity(state, action) {
+    removeCityFromList(state, action) {
       const cityToRemove = state.cities.find((city) => city === action.payload);
       if (cityToRemove) {
         state.cities = state.cities.filter((city) => city !== cityToRemove);
       }
       state.city = "";
+    },
+    resetStore() {
+      storage.removeItem("persist:root");
+      return defaultState;
     },
   },
 });

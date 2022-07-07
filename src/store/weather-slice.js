@@ -1,7 +1,20 @@
 import { createSlice } from "@reduxjs/toolkit";
 const defaultState = {
-  currentWeather: null,
-  weekWeather: null,
+  currentWeather: {
+    data: null,
+    loadCurrentWeather: false,
+  },
+  weekWeather: {
+    data: null,
+    loadForecastData: false,
+  },
+  searchWeather: {
+    data: null,
+  },
+  coordinates: {
+    latitude: null,
+    longitude: null,
+  },
 };
 
 const weatherSlice = createSlice({
@@ -9,10 +22,33 @@ const weatherSlice = createSlice({
   initialState: defaultState,
   reducers: {
     setCurrentWeather(state, action) {
-      state.currentWeather = action.payload;
+      state.currentWeather.data = action.payload;
     },
     setWeekWeather(state, action) {
-      state.weekWeather = action.payload;
+      state.weekWeather.data = action.payload;
+    },
+    setSearchData(state, action) {
+      state.searchWeather.data = action.payload;
+    },
+    setLatitudeAndLongitude(state, action) {
+      state.coordinates.latitude = action.payload.latitude;
+      state.coordinates.longitude = action.payload.longitude;
+    },
+    clearLatitudeAndLongitude(state) {
+      state.coordinates.latitude = null;
+      state.coordinates.longitude = null;
+    },
+    setloadCurrentWeather(state, action) {
+      state.currentWeather.loadCurrentWeather = action.payload;
+    },
+    setLoadForecastData(state, action) {
+      state.weekWeather.loadForecastData = action.payload;
+    },
+    setWeatherObj(state, action) {
+      state = {
+        ...state,
+        ...action.payload,
+      };
     },
   },
 });

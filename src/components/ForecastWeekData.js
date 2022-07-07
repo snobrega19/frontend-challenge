@@ -7,16 +7,14 @@ import { getWeekWeatherEndpoint } from "../utils/request-configs";
 import { statusActions } from "store/status-slice";
 import { weatherActions } from "store/weather-slice";
 import "./ForecastWeekData.css";
-const defaultLatitude = 39.74362;
-const defaultLongitude = -8.80705;
+import { defaultLatitude, defaultLongitude } from "../utils/constants";
 
 function ForecastWeekData() {
   const dispatch = useDispatch();
-  const coordinates = useSelector((state) => state.coordinates);
-  const loadForecastData = useSelector(
-    (state) => state.loading.loadForecastData
+  const coordinates = useSelector((state) => state.weather.coordinates);
+  const { data: weekWeather, loadForecastData } = useSelector(
+    (state) => state.weather.weekWeather
   );
-  const weekWeather = useSelector((state) => state.weather.weekWeather);
   const { makeRequest: getWeekForecast } = useHttp();
 
   useCurrentPosition();

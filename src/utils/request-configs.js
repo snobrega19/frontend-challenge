@@ -20,3 +20,11 @@ export const getWeekWeatherEndpoint = (coordinates = {}) => {
   }
   return endpoint;
 };
+
+export function getFindEndpoint(city) {
+  let endpoint = null;
+  if (city) {
+    endpoint = `find?q=${city}`;
+  }
+  return endpoint;
+}
