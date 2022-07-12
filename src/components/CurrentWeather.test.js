@@ -1,9 +1,7 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
 import CurrentWeather from "./CurrentWeather";
 import { Provider } from "react-redux";
 import { store } from "../store/store";
-import { QueryClientProvider, QueryClient } from "react-query";
 import { renderWithClient } from "mocks/mock-handlers";
 import { server, rest } from "../mocks/node";
 import App from "../App";
