@@ -3,7 +3,6 @@ import Select from "react-select";
 import "./Selector.css";
 import { useSelector, useDispatch } from "react-redux";
 import { weatherActions } from "../../store/weather-slice";
-import useHttp from "../../hooks/use-http";
 import { getFindEndpoint } from "../../utils/request-configs";
 import { statusActions } from "store/status-slice";
 import { citiesActions } from "store/cities-slice";
@@ -11,7 +10,6 @@ import { citiesActions } from "store/cities-slice";
 function Selector(props) {
   const dispatch = useDispatch();
   const { city } = useSelector((state) => state.cities);
-  const { makeRequest: getCoordinatesByCity } = useHttp();
   async function onChangeCitiesHandler(data) {
     const value = data.value;
     if (value !== "") {

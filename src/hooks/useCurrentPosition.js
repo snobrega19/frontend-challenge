@@ -6,19 +6,16 @@ function useCurrentPosition() {
   const dispatch = useDispatch();
   useEffect(() => {
     const geolocation = navigator.geolocation;
-    if (!geolocation) {
-      setError("Geolocation is not supported");
-      return;
+    if (geolocation) {
+      geolocation.getCurrentPosition((position) => {
+        dispatch(
+          weatherActions.setLatitudeAndLongitude({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          })
+        );
+      });
     }
-
-    geolocation.getCurrentPosition((position) => {
-      dispatch(
-        weatherActions.setLatitudeAndLongitude({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-        })
-      );
-    });
   }, []);
 }
 export default useCurrentPosition;

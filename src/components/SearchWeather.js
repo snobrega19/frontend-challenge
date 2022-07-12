@@ -3,7 +3,6 @@ import { weatherActions } from "../store/weather-slice";
 import { useState } from "react";
 import "./SearchWeather.css";
 import Modal from "./UI/Modal";
-import useHttp from "../hooks/use-http";
 import { getFindEndpoint } from "../utils/request-configs";
 import useConfirmModal from "hooks/useConfirmModal";
 import { statusActions } from "store/status-slice";
@@ -23,7 +22,6 @@ function SearchWeather() {
       label: city,
     }))
   );
-  const { makeRequest: getCoordinatesByCity } = useHttp();
   const { confirmClickHandler } = useConfirmModal();
 
   function onCityChangeHandler(event) {

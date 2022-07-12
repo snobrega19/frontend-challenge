@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import useHttp from "../hooks/use-http";
 import "./CurrentWeather.css";
 import { getWeekDayAndTime } from "../utils/date-functions";
 import { weatherActions } from "store/weather-slice";

@@ -2,7 +2,6 @@ import useCurrentPosition from "hooks/useCurrentPosition";
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { weekDay } from "utils/date-functions";
-import useHttp from "../hooks/use-http";
 import { getWeekWeatherEndpoint } from "../utils/request-configs";
 import { statusActions } from "store/status-slice";
 import { weatherActions } from "store/weather-slice";
@@ -15,7 +14,6 @@ function ForecastWeekData() {
   const { data: weekWeather, loadForecastData } = useSelector(
     (state) => state.weather.weekWeather
   );
-  const { makeRequest: getWeekForecast } = useHttp();
 
   useCurrentPosition();
 

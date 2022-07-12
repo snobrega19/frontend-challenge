@@ -9,7 +9,13 @@ import { ErrorBoundary } from "react-error-boundary";
 import { QueryClientProvider, QueryClient } from "react-query";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
 root.render(
   <Provider store={store}>
     <PersistGate persistor={persistor}>
