@@ -32,6 +32,53 @@ export const createMockHandlers = (rest) => [
       })
     );
   }),
+  rest.get("*/onecall", (req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json({
+        daily: [
+          {
+            dt: 1657627200,
+            temp: {
+              day: 39,
+              min: 17.11,
+              max: 39.14,
+              night: 25.89,
+              eve: 32.15,
+              morn: 23.03,
+            },
+            weather: [
+              {
+                id: 802,
+                main: "Clouds",
+                description: "scattered clouds",
+                icon: "03d",
+              },
+            ],
+          },
+          {
+            dt: 1657713600,
+            temp: {
+              day: 36.77,
+              min: 21.46,
+              max: 38.53,
+              night: 21.54,
+              eve: 28.65,
+              morn: 22.44,
+            },
+            weather: [
+              {
+                id: 804,
+                main: "Clouds",
+                description: "overcast clouds",
+                icon: "04d",
+              },
+            ],
+          },
+        ],
+      })
+    );
+  }),
 ];
 
 export function renderWithClient(children) {

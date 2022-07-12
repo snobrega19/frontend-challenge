@@ -18,7 +18,6 @@ export const getWeekWeatherEndpoint = (coordinates = {}) => {
   if (coordinates) {
     endpoint = `onecall?lat=${coordinates.latitude}&lon=${coordinates.longitude}&exclude=${exclude}`;
   }
-  console.log(endpoint);
   return endpoint;
 };
 

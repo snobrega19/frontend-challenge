@@ -61,7 +61,7 @@ function ForecastWeekData() {
       {weekWeather && (
         <div className="weekForecast">
           {weekWeather.daily.map((week) => (
-            <div key={week.dt} className="dayForecast">
+            <div key={week.dt} className="dayForecast" data-testid="weekDay">
               <p>{weekDay(week.dt)}</p>
               <img
                 src={`https://api.openweathermap.org/img/w/${week.weather[0].icon}.png`}
