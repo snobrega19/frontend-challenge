@@ -4,39 +4,46 @@ import CurrentWeather from "./CurrentWeather";
 import { Provider } from "react-redux";
 import { store } from "../store/store";
 import { QueryClientProvider, QueryClient } from "react-query";
+import { renderWithClient } from "mocks/mock-handlers";
+import { server, rest } from "../mocks/node";
+import App from "../App";
 
 test("Renders with a redux provider and a query client provider", () => {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-      },
-    },
-  });
-  render(
+  const result = renderWithClient(
     <Provider store={store}>
-      <QueryClientProvider client={queryClient}>
-        <CurrentWeather />
-      </QueryClientProvider>
+      <CurrentWeather />
     </Provider>
   );
+
+  expect(result).toMatchSnapshot();
 });
 
 test("Renders current weather when the request is successfull", async () => {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-      },
-    },
-  });
-  render(
+  //render component with query client provider and redux provider
+  const result = renderWithClient(
     <Provider store={store}>
-      <QueryClientProvider client={queryClient}>
-        <CurrentWeather />
-      </QueryClientProvider>
+      <CurrentWeather />
     </Provider>
   );
-  expect(await screen.findByText(/Leiria/i)).toBeInTheDocument();
-  screen.debug();
+  //wait for "Leiria" to show in the screen after successfull request
+  expect(await result.findByText(/Leiria/i)).toBeInTheDocument();
+});
+
+test("Show error message when request fails", async () => {
+  //mock server to get error
+  server.use(
+    rest.get("*/weather", (req, res, ctx) => {
+      return res(ctx.status(500));
+    })
+  );
+  //render component with query client provider and redux provider
+  const result = renderWithClient(
+    <Provider store={store}>
+      <App />
+    </Provider>
+  );
+  //shows error message when request fails
+  expect(
+    await result.findByText(/Fail to get current weather for this location/i)
+  ).toBeInTheDocument();
 });

@@ -1,3 +1,6 @@
+import { render } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from "react-query";
+
 export const createMockHandlers = (rest) => [
   rest.get("*/weather", (req, res, ctx) => {
     return res(
@@ -15,7 +18,6 @@ export const createMockHandlers = (rest) => [
             icon: "01d",
           },
         ],
-        base: "stations",
         main: {
           temp: 35.99,
           feels_like: 33.33,
@@ -24,27 +26,24 @@ export const createMockHandlers = (rest) => [
           pressure: 1019,
           humidity: 12,
         },
-        visibility: 10000,
-        wind: {
-          speed: 6.17,
-          deg: 350,
-        },
-        clouds: {
-          all: 0,
-        },
         dt: 1657290284,
-        sys: {
-          type: 1,
-          id: 6896,
-          country: "PT",
-          sunrise: 1657257275,
-          sunset: 1657310732,
-        },
-        timezone: 3600,
-        id: 8012366,
         name: "Leiria",
         cod: 200,
       })
     );
   }),
 ];
+
+export function renderWithClient(children) {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
+
+  return render(
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
+}
