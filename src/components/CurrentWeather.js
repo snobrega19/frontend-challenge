@@ -21,9 +21,7 @@ function CurrentWeather() {
 
   const {
     data: dataResponse,
-    error,
     isLoading,
-    isError,
     refetch,
   } = useQuery(
     "currentWeather",
@@ -42,7 +40,6 @@ function CurrentWeather() {
             "Fail to get current weather for this location."
           )
         );
-        console.log(error);
       },
       onSuccess: (data) => {
         dispatch(weatherActions.setCurrentWeather(data));

@@ -42,7 +42,7 @@ test("Show error message when request fails", async () => {
       <App />
     </Provider>
   );
-  //shows error message when request fails
+  //shows error message in App.js when request fails
   expect(
     await result.findByText(/Fail to get current weather for this location/i)
   ).toBeInTheDocument();

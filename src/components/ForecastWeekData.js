@@ -7,6 +7,8 @@ import { statusActions } from "store/status-slice";
 import { weatherActions } from "store/weather-slice";
 import "./ForecastWeekData.css";
 import { defaultLatitude, defaultLongitude } from "../utils/constants";
+import { useQuery } from "react-query";
+import fetchAPI from "utils/fetch-api";
 
 function ForecastWeekData() {
   const dispatch = useDispatch();
@@ -15,34 +17,44 @@ function ForecastWeekData() {
     (state) => state.weather.weekWeather
   );
 
-  useCurrentPosition();
+  useCurrentPosition(); //gets current longitude and latitude and sets values
 
-  useEffect(() => {
-    getWeekForecast(
-      getWeekWeatherEndpoint(
-        {
+  const {
+    data: dataResponse,
+    isLoading,
+    refetch,
+  } = useQuery(
+    "forecastData",
+    () =>
+      fetchAPI(
+        getWeekWeatherEndpoint({
           latitude: coordinates.latitude ?? defaultLatitude,
           longitude: coordinates.longitude ?? defaultLongitude,
-        },
-        loadForecastData
-      )
-    )
-      .then((res) => {
-        dispatch(weatherActions.setWeekWeather(res));
-        dispatch(
-          statusActions.setSuccessMessage(
-            "Get forecast data for the next 7 days for this location with success."
-          )
-        );
-      })
-      .catch(() => {
+        })
+      ),
+    {
+      refetchOnWindowFocus: false,
+      onError: (error) => {
         dispatch(
           statusActions.setErrorMessage(
             "Fail to get forecast data for this location."
           )
         );
-      });
-  }, [coordinates]);
+      },
+      onSuccess: (data) => {
+        dispatch(weatherActions.setWeekWeather(data));
+        dispatch(
+          statusActions.setSuccessMessage(
+            "Get forecast data for the next 7 days for this location with success."
+          )
+        );
+      },
+    }
+  );
+
+  useEffect(() => {
+    refetch();
+  }, [dataResponse, coordinates]);
 
   return (
     <div className="forecast-data">

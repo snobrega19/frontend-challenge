@@ -44,7 +44,7 @@ function App() {
         <div className="weather-app text-gray-500">
           {/* <SearchWeather /> */}
           <CurrentWeather />
-          {/* <ForecastWeekData /> */}
+          <ForecastWeekData />
         </div>
       )}
     </div>
