@@ -28,7 +28,7 @@ test("Renders current weather when the request is successfull", async () => {
 });
 
 test("Show error message when request fails", async () => {
-  //mock server to get error
+  //mock request to get error
   server.use(
     rest.get("*/weather", (req, res, ctx) => {
       return res(ctx.status(500));
