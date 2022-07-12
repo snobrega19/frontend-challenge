@@ -21,9 +21,9 @@ function useHttp() {
       throw new Error("Request failed.");
     }
 
-    const data = await response.json();
+    // const data = await response.json();
     setIsLoading(false);
-    return data;
+    return response;
   }, []);
 
   return {

@@ -1,12 +1,9 @@
 import React from "react";
-import {
-  render,
-  screen,
-} from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import Modal from "./Modal";
+import CurrentWeather from "./CurrentWeather";
 
-test("Shows a modal with a specific message", () => {
-  
+test("Renders without info", () => {
+  render(<CurrentWeather />);
+  screen.debug();
 });
-
-

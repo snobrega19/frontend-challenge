@@ -8,10 +8,11 @@ import useCurrentPosition from "hooks/useCurrentPosition";
 import { statusActions } from "store/status-slice";
 import { getCurrentWeatherEndpoint } from "../utils/request-configs";
 import { defaultLatitude, defaultLongitude } from "../utils/constants";
+import fetchAPI from "utils/fetch-api";
+import { useQuery } from "react-query";
 
 function CurrentWeather() {
   const dispatch = useDispatch();
-  const { makeRequest: getCurrentWeather } = useHttp();
   const { city } = useSelector((state) => state.cities);
   const { data: currentWeather, loadCurrentWeather } = useSelector(
     (state) => state.weather.currentWeather
@@ -19,29 +20,45 @@ function CurrentWeather() {
   const coordinates = useSelector((state) => state.weather.coordinates);
   useCurrentPosition(); //gets current longitude and latitude and sets values
 
-  useEffect(() => {
-    getCurrentWeather(
-      getCurrentWeatherEndpoint(city, loadCurrentWeather, {
-        latitude: coordinates.latitude ?? defaultLatitude,
-        longitude: coordinates.longitude ?? defaultLongitude,
-      })
-    )
-      .then((res) => {
-        dispatch(weatherActions.setCurrentWeather(res));
-        dispatch(
-          statusActions.setSuccessMessage(
-            "Get current weather for this location with success."
-          )
-        );
-      })
-      .catch(() => {
+  const {
+    data: dataResponse,
+    error,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery(
+    "currentWeather",
+    () =>
+      fetchAPI(
+        getCurrentWeatherEndpoint(city, loadCurrentWeather, {
+          latitude: coordinates.latitude ?? defaultLatitude,
+          longitude: coordinates.longitude ?? defaultLongitude,
+        })
+      ),
+    {
+      refetchOnWindowFocus: false,
+      onError: (error) => {
         dispatch(
           statusActions.setErrorMessage(
             "Fail to get current weather for this location."
           )
         );
-      });
-  }, [coordinates]);
+        console.log(error);
+      },
+      onSuccess: (data) => {
+        dispatch(weatherActions.setCurrentWeather(data));
+        dispatch(
+          statusActions.setSuccessMessage(
+            "Get current weather for this location with success."
+          )
+        );
+      },
+    }
+  );
+
+  useEffect(() => {
+    refetch();
+  }, [dataResponse, coordinates]);
 
   return (
     <div className="currentWeather-div">

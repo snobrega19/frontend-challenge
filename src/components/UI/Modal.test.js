@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import Modal from "./Modal";
 const message = "This is a test message";
 
-test("Shows a modal with a specific message", () => {
+test(`Shows a modal with '${message}' message`, () => {
   render(<Modal show={true} title="Test modal" message={message} />);
   expect(screen.getByText(/test modal/i)).toBeInTheDocument();
   expect(screen.getByTestId("modal-message")).toHaveTextContent(message);
