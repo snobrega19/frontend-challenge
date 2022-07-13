@@ -25,7 +25,6 @@ function SearchWeather() {
       label: city,
     }))
   );
-  const city = useSelector((state) => state.weather.city);
   const { confirmClickHandler } = useConfirmModal();
   const {
     data: dataResponse,
