@@ -79,6 +79,89 @@ export const createMockHandlers = (rest) => [
       })
     );
   }),
+  rest.get("*/find", (req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json({
+        list: [
+          {
+            id: 2267057,
+            name: "Lisbon",
+            coord: {
+              lat: 38.7167,
+              lon: -9.1333,
+            },
+            main: {
+              temp: 30.35,
+              feels_like: 29.86,
+              temp_min: 28.08,
+              temp_max: 34.49,
+              pressure: 1017,
+              humidity: 38,
+            },
+            dt: 1657706954,
+            wind: {
+              speed: 3.09,
+              deg: 0,
+            },
+            sys: {
+              country: "PT",
+            },
+            rain: null,
+            snow: null,
+            clouds: {
+              all: 0,
+            },
+            weather: [
+              {
+                id: 800,
+                main: "Clear",
+                description: "clear sky",
+                icon: "01d",
+              },
+            ],
+          },
+          {
+            id: 4969622,
+            name: "Lisbon",
+            coord: {
+              lat: 44.0315,
+              lon: -70.1045,
+            },
+            main: {
+              temp: 16.61,
+              feels_like: 16.52,
+              temp_min: 14.64,
+              temp_max: 19.16,
+              pressure: 1008,
+              humidity: 84,
+            },
+            dt: 1657706978,
+            wind: {
+              speed: 0,
+              deg: 0,
+            },
+            sys: {
+              country: "US",
+            },
+            rain: null,
+            snow: null,
+            clouds: {
+              all: 0,
+            },
+            weather: [
+              {
+                id: 701,
+                main: "Mist",
+                description: "mist",
+                icon: "50d",
+              },
+            ],
+          },
+        ],
+      })
+    );
+  }),
 ];
 
 export function renderWithClient(children) {
