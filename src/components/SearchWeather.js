@@ -8,6 +8,9 @@ import useConfirmModal from "hooks/useConfirmModal";
 import { statusActions } from "store/status-slice";
 import Selector from "./UI/Selector";
 import { citiesActions } from "store/cities-slice";
+import { useQuery } from "react-query";
+import fetchAPI from "utils/fetch-api";
+import useDebounce from "hooks/useDebounce";
 
 function SearchWeather() {
   const dispatch = useDispatch();
@@ -22,48 +25,50 @@ function SearchWeather() {
       label: city,
     }))
   );
+  const city = useSelector((state) => state.weather.city);
   const { confirmClickHandler } = useConfirmModal();
+  const {
+    data: dataResponse,
+    isLoading,
+    refetch,
+  } = useQuery("searchData", () => fetchAPI(getFindEndpoint(inputCity)), {
+    refetchOnWindowFocus: false,
+    enabled: false,
+    onError: (error) => {
+      dispatch(
+        statusActions.setErrorMessage(
+          `Fail to search suggestions for '${inputCity}'.`
+        )
+      );
+    },
+    onSuccess: (data) => {
+      dispatch(weatherActions.setSearchData(data));
+      dispatch(
+        statusActions.setSuccessMessage(
+          `Successfully get suggestions for (${inputCity}).`
+        )
+      );
+    },
+  });
 
   function onCityChangeHandler(event) {
     setInputCity(event.target.value);
   }
 
   async function searchClickHandler() {
-    getCoordinatesByCity(getFindEndpoint(inputCity))
-      .then((res) => {
-        dispatch(weatherActions.setSearchData(res));
-        dispatch(
-          statusActions.setSuccessMessage(
-            `Successfully get suggestions for (${inputCity}).`
-          )
-        );
-      })
-      .catch(() => {
-        dispatch(
-          statusActions.setErrorMessage(
-            `Fail to search suggestions for '${inputCity}'.`
-          )
-        );
-      });
+    refetch();
   }
 
   function setSelectedSearchData(data) {
     dispatch(citiesActions.addCityToList(data.name + ", " + data.sys.country));
     dispatch(
-      weatherActions.setWeatherObj({
-        currentWeather: {
-          loadCurrentWeather: true,
-        },
-        coordinates: {
-          latitude: data.coord.lat,
-          longitude: data.coord.lon,
-        },
-        weekWeather: {
-          loadForecastData: true,
-        },
+      weatherActions.setLatitudeAndLongitude({
+        latitude: data.coord.lat,
+        longitude: data.coord.lon,
       })
     );
     dispatch(weatherActions.setSearchData(null));
+    dispatch(weatherActions.setCity(data.name + ", " + data.sys.country));
     setInputCity("");
   }
 

@@ -12,8 +12,8 @@ import { useQuery } from "react-query";
 
 function CurrentWeather() {
   const dispatch = useDispatch();
-  const { city } = useSelector((state) => state.cities);
-  const { data: currentWeather, loadCurrentWeather } = useSelector(
+  const { city } = useSelector((state) => state.weather);
+  const { data: currentWeather } = useSelector(
     (state) => state.weather.currentWeather
   );
   const coordinates = useSelector((state) => state.weather.coordinates);
@@ -27,7 +27,7 @@ function CurrentWeather() {
     "currentWeather",
     () =>
       fetchAPI(
-        getCurrentWeatherEndpoint(city, loadCurrentWeather, {
+        getCurrentWeatherEndpoint(city, {
           latitude: coordinates.latitude ?? defaultLatitude,
           longitude: coordinates.longitude ?? defaultLongitude,
         })
@@ -54,7 +54,7 @@ function CurrentWeather() {
 
   useEffect(() => {
     refetch();
-  }, [dataResponse, coordinates]);
+  }, [dataResponse, coordinates, city]);
 
   return (
     <div className="currentWeather-div">

@@ -2,11 +2,9 @@ import { createSlice } from "@reduxjs/toolkit";
 const defaultState = {
   currentWeather: {
     data: null,
-    loadCurrentWeather: false,
   },
   weekWeather: {
     data: null,
-    loadForecastData: false,
   },
   searchWeather: {
     data: null,
@@ -15,6 +13,7 @@ const defaultState = {
     latitude: null,
     longitude: null,
   },
+  city: null,
 };
 
 const weatherSlice = createSlice({
@@ -31,24 +30,24 @@ const weatherSlice = createSlice({
       state.searchWeather.data = action.payload;
     },
     setLatitudeAndLongitude(state, action) {
-      state.coordinates.latitude = action.payload.latitude;
-      state.coordinates.longitude = action.payload.longitude;
+      state.coordinates = action.payload;
     },
     clearLatitudeAndLongitude(state) {
-      state.coordinates.latitude = null;
-      state.coordinates.longitude = null;
-    },
-    setloadCurrentWeather(state, action) {
-      state.currentWeather.loadCurrentWeather = action.payload;
-    },
-    setLoadForecastData(state, action) {
-      state.weekWeather.loadForecastData = action.payload;
+      state.coordinates = {
+        latitude: null,
+        longitude: null,
+      };
     },
     setWeatherObj(state, action) {
       state = {
         ...state,
         ...action.payload,
       };
+
+      console.log(state.coordinates);
+    },
+    setCity(state, action) {
+      state.city = action.payload;
     },
   },
 });

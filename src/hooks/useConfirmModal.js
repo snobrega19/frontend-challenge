@@ -10,6 +10,7 @@ function useConfirmModal() {
       dispatch(citiesActions.resetStore());
     } else {
       dispatch(citiesActions.removeCityFromList(dataToDelete.value));
+      dispatch(weatherActions.setCity(null));
     }
     dispatch(weatherActions.clearLatitudeAndLongitude());
     dispatch(statusActions.setModalProps({ showModal: false }));

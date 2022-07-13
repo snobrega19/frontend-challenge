@@ -6,36 +6,51 @@ import { weatherActions } from "../../store/weather-slice";
 import { getFindEndpoint } from "../../utils/request-configs";
 import { statusActions } from "store/status-slice";
 import { citiesActions } from "store/cities-slice";
+import { useQuery } from "react-query";
+import fetchAPI from "utils/fetch-api";
+import { useEffect, useState } from "react";
+import useDebounce from "hooks/useDebounce";
 
 function Selector(props) {
   const dispatch = useDispatch();
-  const { city } = useSelector((state) => state.cities);
+  const [cityName, setCityName] = useState(null);
+  const [findCity, setFindCity] = useState(false);
+  const city = useSelector((state) => state.weather.city);
+  const debouncedCity = useDebounce(city, 500);
+  const { refetch } = useQuery(
+    "selector",
+    () => fetchAPI(getFindEndpoint(debouncedCity)),
+    {
+      refetchOnWindowFocus: false,
+      enabled: !!debouncedCity && findCity,
+      onError: (error) => {
+        dispatch(
+          statusActions.setErrorMessage(
+            `Fail to get coordinates for the selected city.`
+          )
+        );
+      },
+      onSuccess: (data) => {
+        let latitude, longitude;
+        let cityData = data ? data.list.find((c) => c.name === cityName) : null;
+        if (cityData) {
+          latitude = cityData.coord.lat;
+          longitude = cityData.coord.lon;
+        }
+
+        dispatch(
+          weatherActions.setLatitudeAndLongitude({ latitude, longitude })
+        );
+      },
+    }
+  );
+
   async function onChangeCitiesHandler(data) {
     const value = data.value;
     if (value !== "") {
-      dispatch(citiesActions.setCity(value));
-
-      let city = value.split(",")[0];
-      let latitude, longitude;
-
-      getCoordinatesByCity(getFindEndpoint(city))
-        .then((res) => {
-          latitude = res.list.find((c) => c.name === city).coord.lat;
-          longitude = res.list.find((c) => c.name === city).coord.lon;
-
-          dispatch(
-            weatherActions.setLatitudeAndLongitude({ latitude, longitude })
-          );
-          dispatch(weatherActions.setloadCurrentWeather(true));
-          dispatch(weatherActions.setLoadForecastData(true));
-        })
-        .catch(() => {
-          dispatch(
-            statusActions.setErrorMessage(
-              `Fail to get coordinates for the selected city.`
-            )
-          );
-        });
+      dispatch(weatherActions.setCity(value));
+      setCityName(value.split(",")[0]);
+      setFindCity(true);
     }
   }
 
@@ -59,6 +74,12 @@ function Selector(props) {
       })
     );
   }
+
+  useEffect(() => {
+    if (debouncedCity && findCity) {
+      refetch();
+    }
+  }, [debouncedCity, findCity]);
 
   return (
     <div className="select">

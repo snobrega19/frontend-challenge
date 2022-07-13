@@ -1,11 +1,7 @@
 const exclude = "minutely, hourly, alerts";
-export const getCurrentWeatherEndpoint = (
-  city,
-  loadCurrentWeather,
-  coordinates = {}
-) => {
+export const getCurrentWeatherEndpoint = (city, coordinates = {}) => {
   let endpoint;
-  if (city && loadCurrentWeather) {
+  if (city) {
     endpoint = `weather?q=${city}`;
   } else if (coordinates) {
     endpoint = `weather?lat=${coordinates.latitude}&lon=${coordinates.longitude}`;
@@ -22,7 +18,7 @@ export const getWeekWeatherEndpoint = (coordinates = {}) => {
 };
 
 export function getFindEndpoint(city) {
-  let endpoint = null;
+  let endpoint;
   if (city) {
     endpoint = `find?q=${city}`;
   }

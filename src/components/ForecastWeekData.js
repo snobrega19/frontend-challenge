@@ -13,7 +13,7 @@ import fetchAPI from "utils/fetch-api";
 function ForecastWeekData() {
   const dispatch = useDispatch();
   const coordinates = useSelector((state) => state.weather.coordinates);
-  const { data: weekWeather, loadForecastData } = useSelector(
+  const { data: weekWeather } = useSelector(
     (state) => state.weather.weekWeather
   );
 
@@ -54,6 +54,7 @@ function ForecastWeekData() {
 
   useEffect(() => {
     refetch();
+    console.log(dataResponse);
   }, [dataResponse, coordinates]);
 
   return (
